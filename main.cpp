@@ -2013,7 +2013,7 @@ int main(int argc, const char * argv[]) {
         
         //First set up environment
         int number_of_rovers = 100;
-        int number_of_obstacles = 5;
+        int number_of_obstacles = 0;
         double radius_of_obstacles = 10;
         double distance_between_rovers = 1;
         double safe_distance = 0.5;
@@ -2065,34 +2065,34 @@ int main(int argc, const char * argv[]) {
         vector<vector<double>> location_obstacle;
         vector<vector<double>>* p_location_obstacle = &location_obstacle;
         
-        for (int ob = 0 ; ob < number_of_obstacles; ob++) {
-            double rand_1 = random_global(750);
-            double rand_2 = random_global(750);
-            
-            if (ob == 0 ) {
-                rand_1 = 10;
-                rand_2 = 10;
-            }else if(ob == 1){
-                rand_1 = 26;
-                rand_2 = 26;
-            }else if (ob == 2){
-                rand_1 = 17;
-                rand_2 = 17;
-            }else if (ob == 3){
-                rand_1=50;
-                rand_2 = 50;
-            }else if (ob == 4){
-                rand_1 = 32;
-                rand_2 = 32;
-            }
-            vector<double> temp;
-            temp.push_back(rand_1);
-            temp.push_back(rand_2);
-            
-            //Check if rand_1 or rand_2 is on or near
-            
-            location_obstacle.push_back(temp);
-        }
+//        for (int ob = 0 ; ob < number_of_obstacles; ob++) {
+//            double rand_1 = random_global(750);
+//            double rand_2 = random_global(750);
+//            
+//            if (ob == 0 ) {
+//                rand_1 = 10;
+//                rand_2 = 10;
+//            }else if(ob == 1){
+//                rand_1 = 26;
+//                rand_2 = 26;
+//            }else if (ob == 2){
+//                rand_1 = 17;
+//                rand_2 = 17;
+//            }else if (ob == 3){
+//                rand_1=50;
+//                rand_2 = 50;
+//            }else if (ob == 4){
+//                rand_1 = 32;
+//                rand_2 = 32;
+//            }
+//            vector<double> temp;
+//            temp.push_back(rand_1);
+//            temp.push_back(rand_2);
+//            
+//            //Check if rand_1 or rand_2 is on or near
+//            
+//            location_obstacle.push_back(temp);
+//        }
         
         assert(p_rover->size() == number_of_rovers);
         assert(location_obstacle.size() == number_of_obstacles);
