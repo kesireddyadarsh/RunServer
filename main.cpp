@@ -1577,7 +1577,6 @@ void test_all_sensors(){
     test_circle_path(x_start,y_start);
 }
 
-
 /*******************************************************
  Simulation : All rovers are in simulation
  Reward : Rewards
@@ -1664,6 +1663,30 @@ bool check_if_between(double distance_between_rovers, double cal_distance_betwee
     return false;
 }
 
+bool check_same_quad(double x1, double x2, double y1, double y2){
+    //Both are x positve
+    if ((x1 <= 0)&&(x2 <= 0) ) {
+        if ((y1 <= 0)&&(y2<=0)) {
+            //Both y are positive
+            return  true;
+        }else if((y1 >= 0)&&(y2 >= 0)){
+            //Both y are negative
+            return true;
+        }
+    }else if ((x1 >= 0)&&(x2 >= 0)){
+        //Both x are negative
+        if ((y1 <= 0)&&(y2<=0)) {
+            //Both y are positive
+            return  true;
+        }else if((y1 >= 0)&&(y2 >= 0)){
+            //Both y are negative
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 void cal(vector<Rover>* teamRover, vector<vector<double>>* p_location_obstacle, double distance_between_rovers,double radius_of_obstacles, double safe_distance){
     
     bool verbose = false;
@@ -1747,6 +1770,19 @@ void cal(vector<Rover>* teamRover, vector<vector<double>>* p_location_obstacle, 
         }
         teamRover->at(rover_number).network_for_agent.at(0).closest_dist_to_poi.clear();
         double temp = *min_element(distance_all_points.begin(), distance_all_points.end());
+        int index = 0;
+        for ( ; index < distance_all_points.size(); ) {
+            if (temp == distance_all_points.at(index)) {
+                break;
+            }else{
+                index++;
+            }
+        }
+        
+        bool check_punishment = check_same_quad(teamRover->at(rover_number).network_for_agent.at(0).store_x_values.at(index),teamRover->at(rover_number).destination_x_position,teamRover->at(rover_number).network_for_agent.at(0).store_y_values.at(index),teamRover->at(rover_number).destination_y_position);
+        if (!check_punishment) {
+            temp = temp +1000;
+        }
         teamRover->at(rover_number).network_for_agent.at(0).closest_dist_to_poi.push_back(temp);
     }
     
@@ -1758,6 +1794,9 @@ void cal(vector<Rover>* teamRover, vector<vector<double>>* p_location_obstacle, 
         teamRover->at(rover_number).network_for_agent.at(0).path_value = 0;
         teamRover->at(rover_number).network_for_agent.at(0).path_value = (teamRover->at(rover_number).network_for_agent.at(0).closest_dist_to_poi.at(0));
     }
+    
+    //find quad and push values
+    
 }
 
 //Here it checks for domination and we use three objectives
