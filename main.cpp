@@ -2010,7 +2010,7 @@ int main(int argc, const char * argv[]) {
         remove("coordinate");
         
         //First set up environment
-        int number_of_rovers = 100;
+        int number_of_rovers = 10;
         int number_of_obstacles = 0;
         double radius_of_obstacles = 10;
         double distance_between_rovers = 1;
