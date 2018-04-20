@@ -1756,9 +1756,7 @@ void cal(vector<Rover>* teamRover, vector<vector<double>>* p_location_obstacle, 
     
     for (int rover_number = 0 ; rover_number < teamRover->size(); rover_number++) {
         teamRover->at(rover_number).network_for_agent.at(0).path_value = 0;
-        for (int index = 0 ; index < teamRover->at(rover_number).network_for_agent.at(0).closest_dist_to_poi.size(); index++) {
-            teamRover->at(rover_number).network_for_agent.at(0).path_value += (teamRover->at(rover_number).network_for_agent.at(0).closest_dist_to_poi.at(index));
-        }
+        teamRover->at(rover_number).network_for_agent.at(0).path_value = (teamRover->at(rover_number).network_for_agent.at(0).closest_dist_to_poi.at(0));
     }
 }
 
