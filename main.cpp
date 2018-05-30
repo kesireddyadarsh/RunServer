@@ -2678,8 +2678,8 @@ int main(int argc, const char * argv[]) {
                 fclose(p_f);
                 
             }
-//            EA_working(p_rover,number_of_rovers);
-            nsgaii(p_rover, number_of_rovers);
+            EA_working(p_rover,number_of_rovers);
+//            nsgaii(p_rover, number_of_rovers);
 //            sort_remove(p_rover, number_of_rovers);
             clean(p_rover);
             
