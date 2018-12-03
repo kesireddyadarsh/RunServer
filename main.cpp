@@ -213,7 +213,8 @@ public:
     double hitting_obstacle;// Hitting of obstacle all of them
     vector<vector<double>> right_rover; // Right rover distance values
     vector<vector<double>> left_rover; //left rover distance values
-    
+    double summation_hitting; // Used for ea
+    vector<double> hitting_values; // Instead of right and left lets combine both of them
     vector<double> hitting_right_rover; // Hitting right rover
     vector<double> hitting_left_rover; // Hitting left rover
 };
@@ -584,11 +585,11 @@ void initial_team(vector<population>* teams,vector<vector<double>>* location_obs
                 rand_1 = 10;
                 rand_2 = 8;
             }else if (ob == 1){
-                rand_1 = 15;
+                rand_1 = 8;
                 rand_2 = 20;
             }else if (ob == 2){
-                rand_1 = 20;
-                rand_2 = 15;
+                rand_1 = 5;
+                rand_2 = 30;
             }
             vector<double> temp;
             temp.push_back(rand_1);
@@ -794,7 +795,6 @@ void distance_team(vector<population>* teams, double distance_between_rover, dou
  ********************************************************/
 
 
-
 void reward_team(vector<population>* teams, double distance_between_rover, double safe_distance_between_rover, double radius_of_obstacle, int number_of_objectives){
     
     for (int team_number = 0 ; team_number < teams->size(); team_number++) {
@@ -965,6 +965,22 @@ void reward_team(vector<population>* teams, double distance_between_rover, doubl
     }
     */
     
+    
+    for (int team_number = 0 ; team_number < teams->size(); team_number++) {
+        for (int rover = 0 ; rover < teams->at(team_number).teamRover.size(); rover++) {
+            for ( int neural = 0 ; neural < teams->at(team_number).teamRover.at(rover).new_network.size(); neural++) {
+                teams->at(team_number).teamRover.at(rover).new_network.at(neural).summation_hitting = 0.0;
+                for (int index = 0 ; index < teams->at(team_number).teamRover.at(rover).new_network.at(neural).hitting_right_rover.size(); index++) {
+                        teams->at(team_number).teamRover.at(rover).new_network.at(neural).summation_hitting += 1000;
+                }
+                
+                for (int index = 0 ; index < teams->at(team_number).teamRover.at(rover).new_network.at(neural).hitting_left_rover.size(); index++) {
+                    teams->at(team_number).teamRover.at(rover).new_network.at(neural).summation_hitting += 1000;
+                }
+            }
+        }
+    }
+    
 }
 
 
@@ -982,7 +998,7 @@ void ea(vector<population>* teams){
                     rand_2 = rand()%teams->at(team_number).teamRover.at(rover).new_network.size();
                 }
                 
-                if ((teams->at(team_number).teamRover.at(rover).new_network.at(rand_1).shortest_target_distance + teams->at(team_number).teamRover.at(rover).new_network.at(rand_1).hitting_obstacle ) < (teams->at(team_number).teamRover.at(rover).new_network.at(rand_2).shortest_target_distance + teams->at(team_number).teamRover.at(rover).new_network.at(rand_2).hitting_obstacle) ){
+                if ((teams->at(team_number).teamRover.at(rover).new_network.at(rand_1).shortest_target_distance + teams->at(team_number).teamRover.at(rover).new_network.at(rand_1).hitting_obstacle+ teams->at(team_number).teamRover.at(rover).new_network.at(rand_1).summation_hitting ) < (teams->at(team_number).teamRover.at(rover).new_network.at(rand_2).shortest_target_distance + teams->at(team_number).teamRover.at(rover).new_network.at(rand_2).hitting_obstacle)+ teams->at(team_number).teamRover.at(rover).new_network.at(rand_2).summation_hitting ){
                     //remove rand_2
                     teams->at(team_number).teamRover.at(rover).new_network.erase(teams->at(team_number).teamRover.at(rover).new_network.begin()+rand_2);
                 }else{
@@ -1523,6 +1539,8 @@ void clear_teams(vector<population>* teams){
                 teams->at(team_number).teamRover.at(rover).new_network.at(neural).obstacle_distance.clear();
                 teams->at(team_number).teamRover.at(rover).new_network.at(neural).x_coordinates.clear();
                 teams->at(team_number).teamRover.at(rover).new_network.at(neural).y_coordinates.clear();
+                teams->at(team_number).teamRover.at(rover).new_network.at(neural).hitting_left_rover.clear();
+                teams->at(team_number).teamRover.at(rover).new_network.at(neural).hitting_right_rover.clear();
             }
         }
     }
@@ -1564,10 +1582,10 @@ void run_simulation_function(){
     vector<vector<double>>* p_location_obstacle = &location_obstacle;
     
     
-    int number_of_generations = 500;
+    int number_of_generations = 10000;
 
     for (int generation = 0 ; generation < number_of_generations; generation++) {
-        cout<<generation<<endl;
+        //cout<<generation<<endl;
         initial_team(p_teams, p_location_obstacle,number_of_obstacles,p_coordinates_stat, distance_between_rover);
         simulation_team(p_teams, p_location_obstacle, generation,number_of_obstacles,p_coordinates_stat, distance_between_rover);
         distance_team(p_teams, distance_between_rover, safe_distance_between_rover, radius_of_obstacle, p_location_obstacle);
@@ -1596,7 +1614,7 @@ void run_simulation_function(){
             for (int team_number = 0 ; team_number < teams.size(); team_number++) {
                 for (int rover = 0 ; rover < teams.at(team_number).teamRover.size(); rover++) {
                     for (int neural = 0; neural < teams.at(team_number).teamRover.at(rover).new_network.size(); neural++) {
-                        fprintf(p_rewards, "%d \t %d \t %d \t %f \t %f \t %f \n",team_number,rover,neural, teams.at(team_number).teamRover.at(rover).new_network.at(neural).hitting_obstacle,teams.at(team_number).teamRover.at(rover).new_network.at(neural).shortest_target_distance,teams.at(team_number).teamRover.at(rover).new_network.at(neural).hitting_other_rover);
+                        fprintf(p_rewards, "%d \t %d \t %d \t %f \t %f  \n",team_number,rover,neural, teams.at(team_number).teamRover.at(rover).new_network.at(neural).hitting_obstacle,teams.at(team_number).teamRover.at(rover).new_network.at(neural).shortest_target_distance);
                         cout<<teams.at(team_number).teamRover.at(rover).new_network.at(neural).shortest_target_distance<<endl;
                     }
                 }
